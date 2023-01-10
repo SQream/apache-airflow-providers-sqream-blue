@@ -24,9 +24,9 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
         if any([warehouse, database, role, authenticator, session_parameters]):
             hook_params = kwargs.pop("hook_params", {})
             kwargs["hook_params"] = {
-                "warehouse": warehouse,
+                # "warehouse": warehouse,
                 "database": database,
-                "role": role,
+                # "role": role,
                 # "schema": schema,
                 "authenticator": authenticator,
                 "session_parameters": session_parameters,

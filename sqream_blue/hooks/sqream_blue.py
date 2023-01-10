@@ -67,18 +67,18 @@ class SQreamBlueHook(DbApiHook):
         from wtforms import BooleanField, StringField
 
         return {
-            "account": StringField(lazy_gettext("Account"), widget=BS3TextFieldWidget()),
-            "warehouse": StringField(lazy_gettext("Warehouse"), widget=BS3TextFieldWidget()),
+            # "account": StringField(lazy_gettext("Account"), widget=BS3TextFieldWidget()),
+            # "warehouse": StringField(lazy_gettext("Warehouse"), widget=BS3TextFieldWidget()),
             "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget()),
-            "region": StringField(lazy_gettext("Region"), widget=BS3TextFieldWidget()),
-            "role": StringField(lazy_gettext("Role"), widget=BS3TextFieldWidget()),
-            "private_key_file": StringField(lazy_gettext("Private key (Path)"), widget=BS3TextFieldWidget()),
-            "private_key_content": StringField(
-                lazy_gettext("Private key (Text)"), widget=BS3TextAreaFieldWidget()
-            ),
-            "insecure_mode": BooleanField(
-                label=lazy_gettext("Insecure mode"), description="Turns off OCSP certificate checks"
-            ),
+            # "region": StringField(lazy_gettext("Region"), widget=BS3TextFieldWidget()),
+            # "role": StringField(lazy_gettext("Role"), widget=BS3TextFieldWidget()),
+            # "private_key_file": StringField(lazy_gettext("Private key (Path)"), widget=BS3TextFieldWidget()),
+            # "private_key_content": StringField(
+            #     lazy_gettext("Private key (Text)"), widget=BS3TextAreaFieldWidget()
+            # ),
+            # "insecure_mode": BooleanField(
+            #     label=lazy_gettext("Insecure mode"), description="Turns off OCSP certificate checks"
+            # ),
         }
 
     @staticmethod
@@ -102,24 +102,24 @@ class SQreamBlueHook(DbApiHook):
                 # "schema": "sqream_blue schema",
                 "login": "sqream_blue username",
                 "password": "sqream_blue password",
-                "account": "sqream_blue account name",
-                "warehouse": "sqream_blue warehouse name",
+                # "account": "sqream_blue account name",
+                # "warehouse": "sqream_blue warehouse name",
                 "database": "sqream_blue db name",
-                "region": "sqream_blue hosted region",
-                "role": "sqream_blue role",
-                "private_key_file": "Path of sqream_blue private key (PEM Format)",
-                "private_key_content": "Content to sqream_blue private key (PEM format)",
-                "insecure_mode": "insecure mode",
+                # "region": "sqream_blue hosted region",
+                # "role": "sqream_blue role",
+                # "private_key_file": "Path of sqream_blue private key (PEM Format)",
+                # "private_key_content": "Content to sqream_blue private key (PEM format)",
+                # "insecure_mode": "insecure mode",
             },
         }
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.account = kwargs.pop("account", None)
-        self.warehouse = kwargs.pop("warehouse", None)
+        # self.account = kwargs.pop("account", None)
+        # self.warehouse = kwargs.pop("warehouse", None)
         self.database = kwargs.pop("database", None)
-        self.region = kwargs.pop("region", None)
-        self.role = kwargs.pop("role", None)
+        # self.region = kwargs.pop("region", None)
+        # self.role = kwargs.pop("role", None)
         # self.schema = kwargs.pop("schema", None)
         self.authenticator = kwargs.pop("authenticator", None)
         self.session_parameters = kwargs.pop("session_parameters", None)
@@ -152,11 +152,11 @@ class SQreamBlueHook(DbApiHook):
         """
         conn = self.get_connection(self.sqream_blue_conn_id)  # type: ignore[attr-defined]
         extra_dict = conn.extra_dejson
-        account = self._get_field(extra_dict, "account") or ""
-        warehouse = self._get_field(extra_dict, "warehouse") or ""
+        # account = self._get_field(extra_dict, "account") or ""
+        # warehouse = self._get_field(extra_dict, "warehouse") or ""
         database = self._get_field(extra_dict, "database") or ""
-        region = self._get_field(extra_dict, "region") or ""
-        role = self._get_field(extra_dict, "role") or ""
+        # region = self._get_field(extra_dict, "region") or ""
+        # role = self._get_field(extra_dict, "role") or ""
         insecure_mode = _try_to_boolean(self._get_field(extra_dict, "insecure_mode"))
         # schema = conn.schema or ""
 
@@ -169,10 +169,10 @@ class SQreamBlueHook(DbApiHook):
             "password": conn.password or "",
             # "schema": self.schema or schema,
             "database": self.database or database,
-            "account": self.account or account,
-            "warehouse": self.warehouse or warehouse,
-            "region": self.region or region,
-            "role": self.role or role,
+            # "account": self.account or account,
+            # "warehouse": self.warehouse or warehouse,
+            # "region": self.region or region,
+            # "role": self.role or role,
             "authenticator": self.authenticator or authenticator,
             "session_parameters": self.session_parameters or session_parameters,
             # application is used to track origin of the requests
