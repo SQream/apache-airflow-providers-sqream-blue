@@ -33,7 +33,7 @@ def _ensure_prefixes(conn_type):
         @wraps(func)
         def inner():
             field_behaviors = func()
-            conn_attrs = {"host", "schema", "login", "password", "port", "extra"}
+            conn_attrs = {"host", "login", "password", "port", "extra"}
 
             def _ensure_prefix(field):
                 if field not in conn_attrs and not field.startswith("extra__"):
@@ -99,7 +99,7 @@ class SQreamBlueHook(DbApiHook):
                     },
                     indent=1,
                 ),
-                "schema": "sqream_blue schema",
+                # "schema": "sqream_blue schema",
                 "login": "sqream_blue username",
                 "password": "sqream_blue password",
                 "account": "sqream_blue account name",
@@ -120,7 +120,7 @@ class SQreamBlueHook(DbApiHook):
         self.database = kwargs.pop("database", None)
         self.region = kwargs.pop("region", None)
         self.role = kwargs.pop("role", None)
-        self.schema = kwargs.pop("schema", None)
+        # self.schema = kwargs.pop("schema", None)
         self.authenticator = kwargs.pop("authenticator", None)
         self.session_parameters = kwargs.pop("session_parameters", None)
         self.query_ids: list[str] = []
@@ -158,7 +158,7 @@ class SQreamBlueHook(DbApiHook):
         region = self._get_field(extra_dict, "region") or ""
         role = self._get_field(extra_dict, "role") or ""
         insecure_mode = _try_to_boolean(self._get_field(extra_dict, "insecure_mode"))
-        schema = conn.schema or ""
+        # schema = conn.schema or ""
 
         # authenticator and session_parameters never supported long name so we don't use _get_field
         authenticator = extra_dict.get("authenticator", "sqream_blue")
@@ -167,7 +167,7 @@ class SQreamBlueHook(DbApiHook):
         conn_config = {
             "username": conn.login,
             "password": conn.password or "",
-            "schema": self.schema or schema,
+            # "schema": self.schema or schema,
             "database": self.database or database,
             "account": self.account or account,
             "warehouse": self.warehouse or warehouse,
