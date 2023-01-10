@@ -70,6 +70,7 @@ class SQreamBlueHook(DbApiHook):
             # "account": StringField(lazy_gettext("Account"), widget=BS3TextFieldWidget()),
             # "warehouse": StringField(lazy_gettext("Warehouse"), widget=BS3TextFieldWidget()),
             "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget()),
+            "host": StringField(lazy_gettext("Host"), widget=BS3TextFieldWidget()),
             # "region": StringField(lazy_gettext("Region"), widget=BS3TextFieldWidget()),
             # "role": StringField(lazy_gettext("Role"), widget=BS3TextFieldWidget()),
             # "private_key_file": StringField(lazy_gettext("Private key (Path)"), widget=BS3TextFieldWidget()),
@@ -100,6 +101,7 @@ class SQreamBlueHook(DbApiHook):
                     indent=1,
                 ),
                 # "schema": "sqream_blue schema",
+                "host": "sqream_blue host domain",
                 "login": "sqream_blue username",
                 "password": "sqream_blue password",
                 # "account": "sqream_blue account name",
@@ -118,6 +120,7 @@ class SQreamBlueHook(DbApiHook):
         # self.account = kwargs.pop("account", None)
         # self.warehouse = kwargs.pop("warehouse", None)
         self.database = kwargs.pop("database", None)
+        self.host = kwargs.pop("host", None)
         # self.region = kwargs.pop("region", None)
         # self.role = kwargs.pop("role", None)
         # self.schema = kwargs.pop("schema", None)
@@ -155,6 +158,7 @@ class SQreamBlueHook(DbApiHook):
         # account = self._get_field(extra_dict, "account") or ""
         # warehouse = self._get_field(extra_dict, "warehouse") or ""
         database = self._get_field(extra_dict, "database") or ""
+        host = self._get_field(extra_dict, "host") or ""
         # region = self._get_field(extra_dict, "region") or ""
         # role = self._get_field(extra_dict, "role") or ""
         insecure_mode = _try_to_boolean(self._get_field(extra_dict, "insecure_mode"))
@@ -165,6 +169,7 @@ class SQreamBlueHook(DbApiHook):
         # session_parameters = extra_dict.get("session_parameters")
 
         conn_config = {
+            "host": self.host or host,
             "username": conn.login,
             "password": conn.password or "",
             # "schema": self.schema or schema,
