@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 """Perform the package sqream_blue-provider setup."""
 setup(
-    name='airflow-provider-sqream_blue',
+    name='airflow-provider-sqream-blue',
     version="0.0.1",
     description='About Apache Airflow - A platform to programmatically author, schedule, and monitor workflows.',
     long_description=long_description,
