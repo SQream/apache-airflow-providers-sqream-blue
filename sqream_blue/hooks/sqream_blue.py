@@ -337,7 +337,7 @@ class SQreamBlueHook(DbApiHook):
                             results.append(result)
                             self.descriptions.append(cur.description)
 
-                    query_id = cur.sfqid
+                    query_id = cur.context_id
                     self.log.info("Rows affected: %s", cur.rowcount)
                     self.log.info("Sqream blue query id: %s", query_id)
                     self.query_ids.append(query_id)

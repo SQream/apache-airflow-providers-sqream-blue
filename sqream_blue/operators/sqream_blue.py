@@ -15,19 +15,19 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
             sqream_blue_conn_id: str = "sqream_blue_default",
             # warehouse: str | None = None,
             database: str | None = None,
-            host : str | None = None,
+            # host : str | None = None,
             # role: str | None = None,
             # schema: str | None = None,
             # authenticator: str | None = None,
             # session_parameters: dict | None = None,
             **kwargs,
     ) -> None:
-        if any([database, host]):
+        if any([database]):
             hook_params = kwargs.pop("hook_params", {})
             kwargs["hook_params"] = {
                 # "warehouse": warehouse,
                 "database": database,
-                "host": host,
+                # "host": host,
                 # "role": role,
                 # "schema": schema,
                 # "authenticator": authenticator,
