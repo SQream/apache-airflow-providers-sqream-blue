@@ -122,7 +122,7 @@ class SQreamBlueHook(DbApiHook):
         # self.role = kwargs.pop("role", None)
         # self.schema = kwargs.pop("schema", None)
         # self.authenticator = kwargs.pop("authenticator", None)
-        self.session_parameters = kwargs.pop("session_parameters", None)
+        # self.session_parameters = kwargs.pop("session_parameters", None)
         self.query_ids: list[str] = []
 
     def _get_field(self, extra_dict, field_name):
@@ -162,7 +162,7 @@ class SQreamBlueHook(DbApiHook):
 
         # authenticator and session_parameters never supported long name so we don't use _get_field
         # authenticator = extra_dict.get("authenticator", "sqream_blue")
-        session_parameters = extra_dict.get("session_parameters")
+        # session_parameters = extra_dict.get("session_parameters")
 
         conn_config = {
             "username": conn.login,
@@ -174,7 +174,7 @@ class SQreamBlueHook(DbApiHook):
             # "region": self.region or region,
             # "role": self.role or role,
             # "authenticator": self.authenticator or authenticator,
-            "session_parameters": self.session_parameters or session_parameters,
+            # "session_parameters": self.session_parameters or session_parameters,
             # application is used to track origin of the requests
             "application": os.environ.get("AIRFLOW_SQREAM_BLUE_PARTNER", "AIRFLOW"),
         }

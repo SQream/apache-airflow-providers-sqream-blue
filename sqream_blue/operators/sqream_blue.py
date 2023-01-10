@@ -18,10 +18,10 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
             # role: str | None = None,
             # schema: str | None = None,
             # authenticator: str | None = None,
-            session_parameters: dict | None = None,
+            # session_parameters: dict | None = None,
             **kwargs,
     ) -> None:
-        if any([database, session_parameters]):
+        if any([database]):
             hook_params = kwargs.pop("hook_params", {})
             kwargs["hook_params"] = {
                 # "warehouse": warehouse,
@@ -29,7 +29,7 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
                 # "role": role,
                 # "schema": schema,
                 # "authenticator": authenticator,
-                "session_parameters": session_parameters,
+                # "session_parameters": session_parameters,
                 **hook_params,
             }
         super().__init__(conn_id=sqream_blue_conn_id, **kwargs)
