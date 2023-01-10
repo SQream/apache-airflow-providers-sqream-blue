@@ -165,7 +165,7 @@ class SQreamBlueHook(DbApiHook):
         session_parameters = extra_dict.get("session_parameters")
 
         conn_config = {
-            "user": conn.login,
+            "username": conn.login,
             "password": conn.password or "",
             "schema": self.schema or schema,
             "database": self.database or database,
