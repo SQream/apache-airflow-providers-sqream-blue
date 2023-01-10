@@ -176,7 +176,7 @@ class SQreamBlueHook(DbApiHook):
             # "authenticator": self.authenticator or authenticator,
             # "session_parameters": self.session_parameters or session_parameters,
             # application is used to track origin of the requests
-            "application": os.environ.get("AIRFLOW_SQREAM_BLUE_PARTNER", "AIRFLOW"),
+            # "application": os.environ.get("AIRFLOW_SQREAM_BLUE_PARTNER", "AIRFLOW"),
         }
         if insecure_mode:
             conn_config["insecure_mode"] = insecure_mode
