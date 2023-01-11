@@ -321,26 +321,26 @@ class SQreamBlueHook(DbApiHook):
         else:
             raise ValueError("List of SQL statements is empty")
 
-        self.log.info("handler={}", handler)
+        self.log.info("handler=%s", handler)
         with closing(self.get_conn()) as conn:
             # self.set_autocommit(conn, autocommit)
 
             with self._get_cursor(conn, return_dictionaries) as cur:
                 results = []
                 for sql_statement in sql_list:
-                    self.log.info("Run sql {}", sql_statement)
+                    self.log.info("Run sql %s", sql_statement)
                     self._run_command(cur, sql_statement, parameters)
 
                     if handler is not None:
                         result = handler(cur)
                         if return_single_query_results(sql, return_last, split_statements):
-                            self.log.info("result={}", result)
-                            self.log.info("cur.description={}", cur.description)
+                            self.log.info("result=%s", result)
+                            self.log.info("cur.description=%s", cur.description)
                             _last_result = result
                             _last_description = cur.description
                         else:
-                            self.log.info("result={}", result)
-                            self.log.info("cur.description={}", cur.description)
+                            self.log.info("result=%s", result)
+                            self.log.info("cur.description=%s", cur.description)
                             results.append(result)
                             self.descriptions.append(cur.description)
 
