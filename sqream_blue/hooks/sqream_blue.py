@@ -70,7 +70,7 @@ class SQreamBlueHook(DbApiHook):
         import json
 
         return {
-            "hidden_fields": ["port"],
+            "hidden_fields": ["port", "schema"],
             "relabeling": {},
             "placeholders": {
                 "extra": json.dumps(
