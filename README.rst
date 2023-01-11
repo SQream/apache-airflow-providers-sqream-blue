@@ -4,7 +4,7 @@ Apache Airflow is a popular open source orchestration tool. It allows users to w
 
 Different kind of actions are represented with specialized Python classes, called “Operators”. Each SaaS database vendor can build one or more customized Operators for performing different DB operations (e.g. execute arbitrary SQL statements, schedule DB job runs etc.).
 
-This package is a Operator for executing SQL statments on SQream Blue using Python connector.
+This package is an Operator for executing SQL statments on SQream Blue using Python connector.
 
 
 Requirements
