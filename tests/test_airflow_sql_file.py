@@ -18,3 +18,11 @@ with DAG(
         sqream_blue_conn_id="daniel_connection",
         dag=dag,
     )
+
+
+"""
+daniel.sql -
+select 1;
+select 2;
+select 3;
+"""
