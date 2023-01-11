@@ -34,7 +34,8 @@ After the installation of the package on the Airflow server,
 refresh the server and create a new connection.
 sqream-blue will apper on the connection-type.
 
-![](create_connection.png)
+.. image:: images/create_connection.png
+   :width: 400
 
 Click test and save after enter connection params.
 
@@ -108,5 +109,6 @@ Example of python dag file
 
 The execution of the Dag File -
 
-![](execution_dag.png)
+.. image:: images/execution_dag.png
+   :width: 400
  
