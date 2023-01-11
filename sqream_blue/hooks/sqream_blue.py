@@ -227,7 +227,7 @@ class SQreamBlueHook(DbApiHook):
 
         return conn_config
 
-    def get_uri(self) -> str:
+    def get_uri(self) -> URL:
         """Override DbApiHook get_uri method for get_sqlalchemy_engine()"""
         conn_params = self._get_conn_params()
         return self._conn_params_to_sqlalchemy_uri(conn_params)
@@ -246,30 +246,6 @@ class SQreamBlueHook(DbApiHook):
         conn_config = self._get_conn_params()
         conn = connect(**conn_config)
         return conn
-
-    # def get_sqlalchemy_engine(self, engine_kwargs=None):
-    #     """
-    #     Get an sqlalchemy_engine object.
-    #     :param engine_kwargs: Kwargs used in :func:`~sqlalchemy.create_engine`.
-    #     :return: the created engine.
-    #     """
-    #     engine_kwargs = engine_kwargs or {}
-    #     conn_params = self._get_conn_params()
-    #     if "insecure_mode" in conn_params:
-    #         engine_kwargs.setdefault("connect_args", dict())
-    #         engine_kwargs["connect_args"]["insecure_mode"] = True
-    #     for key in ["session_parameters", "private_key"]:
-    #         if conn_params.get(key):
-    #             engine_kwargs.setdefault("connect_args", dict())
-    #             engine_kwargs["connect_args"][key] = conn_params[key]
-    #     return create_engine(self._conn_params_to_sqlalchemy_uri(conn_params), **engine_kwargs)
-
-    def set_autocommit(self, conn, autocommit: Any) -> None:
-        conn.autocommit(autocommit)
-        conn.autocommit_mode = autocommit
-
-    def get_autocommit(self, conn):
-        return getattr(conn, "autocommit_mode", False)
 
     def run(
         self,
@@ -303,6 +279,7 @@ class SQreamBlueHook(DbApiHook):
         """
         self.query_ids = []
 
+        self.log.info("split_statements=%s", split_statements)
         if isinstance(sql, str):
             split_statements = False
             if split_statements:
@@ -322,7 +299,6 @@ class SQreamBlueHook(DbApiHook):
             raise ValueError("List of SQL statements is empty")
 
         with closing(self.get_conn()) as conn:
-            # self.set_autocommit(conn, autocommit)
 
             with self._get_cursor(conn, return_dictionaries) as cur:
                 results = []
@@ -347,10 +323,6 @@ class SQreamBlueHook(DbApiHook):
                     self.log.info("Rows affected: %s", cur.rowcount)
                     self.log.info("Sqream blue query id: %s", query_id)
                     self.query_ids.append(query_id)
-
-            # If autocommit was set to False or db does not support autocommit, we do a manual commit.
-            if not self.get_autocommit(conn):
-                conn.commit()
 
         if handler is None:
             return None
