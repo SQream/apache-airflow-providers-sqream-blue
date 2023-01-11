@@ -10,10 +10,10 @@ from airflow.providers.common.sql.hooks.sql import DbApiHook, return_single_quer
 from airflow.utils.strings import to_boolean
 
 
-def _try_to_boolean(value: Any):
-    if isinstance(value, (str, type(None))):
-        return to_boolean(value)
-    return value
+# def _try_to_boolean(value: Any):
+#     if isinstance(value, (str, type(None))):
+#         return to_boolean(value)
+#     return value
 
 
 def _ensure_prefixes(conn_type):
@@ -119,13 +119,13 @@ class SQreamBlueHook(DbApiHook):
         }
         return conn_config
 
-    def get_uri(self) -> URL:
-        """Override DbApiHook get_uri method for get_sqlalchemy_engine()"""
-        conn_params = self._get_conn_params()
-        return self._conn_params_to_sqlalchemy_uri(conn_params)
-
-    def _conn_params_to_sqlalchemy_uri(self, conn_params: dict) -> URL:
-        return URL(**{k: v for k, v in conn_params.items()})
+    # def get_uri(self) -> URL:
+    #     """Override DbApiHook get_uri method for get_sqlalchemy_engine()"""
+    #     conn_params = self._get_conn_params()
+    #     return self._conn_params_to_sqlalchemy_uri(conn_params)
+    #
+    # def _conn_params_to_sqlalchemy_uri(self, conn_params: dict) -> URL:
+    #     return URL(**{k: v for k, v in conn_params.items()})
 
     def get_conn(self):
         """Returns a sqream_blue.connection object"""
