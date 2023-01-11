@@ -1,19 +1,11 @@
 from __future__ import annotations
-import os
 from contextlib import closing, contextmanager
 from functools import wraps
-from io import StringIO
-from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
-from typing import Any, Callable, Dict, Optional, Union
+
 from pysqream_blue import connect, utils
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from sqlalchemy.engine import URL
 
 from sqlalchemy.engine.url import URL
-
-from airflow import AirflowException
 from airflow.providers.common.sql.hooks.sql import DbApiHook, return_single_query_results
 from airflow.utils.strings import to_boolean
 
@@ -68,19 +60,8 @@ class SQreamBlueHook(DbApiHook):
         from wtforms import BooleanField, StringField
 
         return {
-            # "account": StringField(lazy_gettext("Account"), widget=BS3TextFieldWidget()),
-            # "warehouse": StringField(lazy_gettext("Warehouse"), widget=BS3TextFieldWidget()),
             "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget()),
             "host": StringField(lazy_gettext("Host"), widget=BS3TextFieldWidget()),
-            # "region": StringField(lazy_gettext("Region"), widget=BS3TextFieldWidget()),
-            # "role": StringField(lazy_gettext("Role"), widget=BS3TextFieldWidget()),
-            # "private_key_file": StringField(lazy_gettext("Private key (Path)"), widget=BS3TextFieldWidget()),
-            # "private_key_content": StringField(
-            #     lazy_gettext("Private key (Text)"), widget=BS3TextAreaFieldWidget()
-            # ),
-            # "insecure_mode": BooleanField(
-            #     label=lazy_gettext("Insecure mode"), description="Turns off OCSP certificate checks"
-            # ),
         }
 
     @staticmethod
@@ -95,38 +76,20 @@ class SQreamBlueHook(DbApiHook):
             "placeholders": {
                 "extra": json.dumps(
                     {
-                        # "authenticator": "sqream_blue oauth",
-                        # "private_key_file": "private key",
-                        # "session_parameters": "session parameters",
                     },
                     indent=1,
                 ),
-                # "schema": "sqream_blue schema",
-                "host": "sqream_blue host domain",
+                # "host": "sqream_blue host domain",
                 "login": "sqream_blue username",
                 "password": "sqream_blue password",
-                # "account": "sqream_blue account name",
-                # "warehouse": "sqream_blue warehouse name",
                 "database": "sqream_blue db name",
-                # "region": "sqream_blue hosted region",
-                # "role": "sqream_blue role",
-                # "private_key_file": "Path of sqream_blue private key (PEM Format)",
-                # "private_key_content": "Content to sqream_blue private key (PEM format)",
-                # "insecure_mode": "insecure mode",
             },
         }
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        # self.account = kwargs.pop("account", None)
-        # self.warehouse = kwargs.pop("warehouse", None)
         self.database = kwargs.pop("database", None)
         self.host = kwargs.pop("host", None)
-        # self.region = kwargs.pop("region", None)
-        # self.role = kwargs.pop("role", None)
-        # self.schema = kwargs.pop("schema", None)
-        # self.authenticator = kwargs.pop("authenticator", None)
-        # self.session_parameters = kwargs.pop("session_parameters", None)
         self.query_ids: list[str] = []
 
     def _get_field(self, extra_dict, field_name):
@@ -156,75 +119,15 @@ class SQreamBlueHook(DbApiHook):
         """
         conn = self.get_connection(self.sqream_blue_conn_id)  # type: ignore[attr-defined]
         extra_dict = conn.extra_dejson
-        # account = self._get_field(extra_dict, "account") or ""
-        # warehouse = self._get_field(extra_dict, "warehouse") or ""
         database = self._get_field(extra_dict, "database") or ""
         host = self._get_field(extra_dict, "host") or ""
-        # region = self._get_field(extra_dict, "region") or ""
-        # role = self._get_field(extra_dict, "role") or ""
-        insecure_mode = _try_to_boolean(self._get_field(extra_dict, "insecure_mode"))
-        # schema = conn.schema or ""
-
-        # authenticator and session_parameters never supported long name so we don't use _get_field
-        # authenticator = extra_dict.get("authenticator", "sqream_blue")
-        # session_parameters = extra_dict.get("session_parameters")
 
         conn_config = {
             "host": self.host or host,
             "username": conn.login,
             "password": conn.password or "",
-            # "schema": self.schema or schema,
             "database": self.database or database,
-            # "account": self.account or account,
-            # "warehouse": self.warehouse or warehouse,
-            # "region": self.region or region,
-            # "role": self.role or role,
-            # "authenticator": self.authenticator or authenticator,
-            # "session_parameters": self.session_parameters or session_parameters,
-            # application is used to track origin of the requests
-            # "application": os.environ.get("AIRFLOW_SQREAM_BLUE_PARTNER", "AIRFLOW"),
         }
-        if insecure_mode:
-            conn_config["insecure_mode"] = insecure_mode
-
-        # If private_key_file is specified in the extra json, load the contents of the file as a private key.
-        # If private_key_content is specified in the extra json, use it as a private key.
-        # As a next step, specify this private key in the connection configuration.
-        # The connection password then becomes the passphrase for the private key.
-        # If your private key is not encrypted (not recommended), then leave the password empty.
-
-        private_key_file = self._get_field(extra_dict, "private_key_file")
-        private_key_content = self._get_field(extra_dict, "private_key_content")
-
-        private_key_pem = None
-        if private_key_content and private_key_file:
-            raise AirflowException(
-                "The private_key_file and private_key_content extra fields are mutually exclusive. "
-                "Please remove one."
-            )
-        elif private_key_file:
-            private_key_pem = Path(private_key_file).read_bytes()
-        elif private_key_content:
-            private_key_pem = private_key_content.encode()
-
-        if private_key_pem:
-            passphrase = None
-            if conn.password:
-                passphrase = conn.password.strip().encode()
-
-            p_key = serialization.load_pem_private_key(
-                private_key_pem, password=passphrase, backend=default_backend()
-            )
-
-            pkb = p_key.private_bytes(
-                encoding=serialization.Encoding.DER,
-                format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.NoEncryption(),
-            )
-
-            conn_config["private_key"] = pkb
-            conn_config.pop("password", None)
-
         return conn_config
 
     def get_uri(self) -> URL:
@@ -233,13 +136,7 @@ class SQreamBlueHook(DbApiHook):
         return self._conn_params_to_sqlalchemy_uri(conn_params)
 
     def _conn_params_to_sqlalchemy_uri(self, conn_params: dict) -> URL:
-        return URL(
-            **{
-                k: v
-                for k, v in conn_params.items()
-                if v and k not in ["session_parameters", "insecure_mode", "private_key"]
-            }
-        )
+        return URL(**{k: v for k, v in conn_params.items()})
 
     def get_conn(self):
         """Returns a sqream_blue.connection object"""
@@ -295,20 +192,15 @@ class SQreamBlueHook(DbApiHook):
         with closing(self.get_conn()) as conn:
             results = []
             for sql_statement in sql_list:
-                with self._get_cursor(conn, return_dictionaries) as cur:
-                    self.log.info("Run sql %s", sql_statement)
+                with self._get_cursor(conn) as cur:
                     self._run_command(cur, sql_statement, parameters)
 
                     if handler is not None and cur.query_type == 1:
                         result = handler(cur)
                         if return_single_query_results(sql, return_last, split_statements):
-                            self.log.info("result=%s", result)
-                            self.log.info("cur.description=%s", cur.description)
                             _last_result = result
                             _last_description = cur.description
                         else:
-                            self.log.info("result=%s", result)
-                            self.log.info("cur.description=%s", cur.description)
                             results.append(result)
                             self.descriptions.append(cur.description)
 
@@ -326,17 +218,11 @@ class SQreamBlueHook(DbApiHook):
             return results
 
     @contextmanager
-    def _get_cursor(self, conn: Any, return_dictionaries: bool):
+    def _get_cursor(self, conn: Any):
         cursor = None
         try:
-            if return_dictionaries:
-                raise utils.NotSupportedError("Not supported dict cursor")
-                # cursor = conn.cursor(DictCursor)
-            else:
-                self.log.info("new cursor")
-                cursor = conn.cursor()
+            cursor = conn.cursor()
             yield cursor
         finally:
             if cursor is not None:
-                self.log.info("close cursor")
                 cursor.close()
