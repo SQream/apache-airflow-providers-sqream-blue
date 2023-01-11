@@ -334,8 +334,10 @@ class SQreamBlueHook(DbApiHook):
                 raise utils.NotSupportedError("Not supported dict cursor")
                 # cursor = conn.cursor(DictCursor)
             else:
+                self.log.info("new cursor")
                 cursor = conn.cursor()
             yield cursor
         finally:
             if cursor is not None:
+                self.log.info("close cursor")
                 cursor.close()
