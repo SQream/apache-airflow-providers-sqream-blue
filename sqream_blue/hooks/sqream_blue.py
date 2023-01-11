@@ -5,15 +5,7 @@ from typing import Any, Callable, Iterable, Mapping
 
 from pysqream_blue import connect, utils
 
-from sqlalchemy.engine.url import URL
 from airflow.providers.common.sql.hooks.sql import DbApiHook, return_single_query_results
-from airflow.utils.strings import to_boolean
-
-
-# def _try_to_boolean(value: Any):
-#     if isinstance(value, (str, type(None))):
-#         return to_boolean(value)
-#     return value
 
 
 def _ensure_prefixes(conn_type):
@@ -54,9 +46,9 @@ class SQreamBlueHook(DbApiHook):
     @staticmethod
     def get_connection_form_widgets() -> dict[str, Any]:
         """Returns connection widgets to add to connection form"""
-        from flask_appbuilder.fieldwidgets import BS3TextAreaFieldWidget, BS3TextFieldWidget
+        from flask_appbuilder.fieldwidgets import BS3TextFieldWidget
         from flask_babel import lazy_gettext
-        from wtforms import BooleanField, StringField
+        from wtforms import StringField
 
         return {
             "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget())
@@ -118,14 +110,6 @@ class SQreamBlueHook(DbApiHook):
             "database": self.database or database
         }
         return conn_config
-
-    # def get_uri(self) -> URL:
-    #     """Override DbApiHook get_uri method for get_sqlalchemy_engine()"""
-    #     conn_params = self._get_conn_params()
-    #     return self._conn_params_to_sqlalchemy_uri(conn_params)
-    #
-    # def _conn_params_to_sqlalchemy_uri(self, conn_params: dict) -> URL:
-    #     return URL(**{k: v for k, v in conn_params.items()})
 
     def get_conn(self):
         """Returns a sqream_blue.connection object"""

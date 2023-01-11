@@ -1,7 +1,7 @@
 from __future__ import annotations
-import warnings
-from typing import Any, Iterable, Mapping, Sequence, SupportsAbs
+from typing import Any, Sequence
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
+
 
 class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
     template_fields: Sequence[str] = ("sql",)
