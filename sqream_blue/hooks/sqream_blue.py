@@ -9,6 +9,7 @@ from typing import Any, Callable, Dict, Optional, Union
 from pysqream_blue import connect, utils
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+from sqlalchemy.engine import URL
 
 from sqlalchemy.engine.url import URL
 
@@ -231,7 +232,7 @@ class SQreamBlueHook(DbApiHook):
         conn_params = self._get_conn_params()
         return self._conn_params_to_sqlalchemy_uri(conn_params)
 
-    def _conn_params_to_sqlalchemy_uri(self, conn_params: dict) -> str:
+    def _conn_params_to_sqlalchemy_uri(self, conn_params: dict) -> URL:
         return URL(
             **{
                 k: v
@@ -316,24 +317,30 @@ class SQreamBlueHook(DbApiHook):
             sql_list = sql
 
         if sql_list:
-            self.log.debug("Executing following statements against Sqream blue DB: %s", sql_list)
+            self.log.info("Executing following statements against Sqream blue DB: %s", sql_list)
         else:
             raise ValueError("List of SQL statements is empty")
 
+        self.log.info("handler={}", handler)
         with closing(self.get_conn()) as conn:
             # self.set_autocommit(conn, autocommit)
 
             with self._get_cursor(conn, return_dictionaries) as cur:
                 results = []
                 for sql_statement in sql_list:
+                    self.log.info("Run sql {}", sql_statement)
                     self._run_command(cur, sql_statement, parameters)
 
                     if handler is not None:
                         result = handler(cur)
                         if return_single_query_results(sql, return_last, split_statements):
+                            self.log.info("result={}", result)
+                            self.log.info("cur.description={}", cur.description)
                             _last_result = result
                             _last_description = cur.description
                         else:
+                            self.log.info("result={}", result)
+                            self.log.info("cur.description={}", cur.description)
                             results.append(result)
                             self.descriptions.append(cur.description)
 
