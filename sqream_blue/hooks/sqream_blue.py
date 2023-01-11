@@ -67,17 +67,11 @@ class SQreamBlueHook(DbApiHook):
     @_ensure_prefixes(conn_type="sqream_blue")
     def get_ui_field_behaviour() -> dict[str, Any]:
         """Returns custom field behaviour"""
-        import json
 
         return {
             "hidden_fields": ["port", "schema"],
             "relabeling": {},
             "placeholders": {
-                "extra": json.dumps(
-                    {
-                    },
-                    indent=1,
-                ),
                 "host": "enter host domain to connect to SQream",
                 "login": "enter username to connect to SQream",
                 "password": "enter password to connect to SQream",
@@ -87,8 +81,8 @@ class SQreamBlueHook(DbApiHook):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.database = kwargs.pop("database", None)
-        self.host = kwargs.pop("host", None)
+        # self.database = kwargs.pop("database", None)
+        # self.host = kwargs.pop("host", None)
         self.query_ids: list[str] = []
 
     def _get_field(self, extra_dict, field_name):
@@ -117,15 +111,15 @@ class SQreamBlueHook(DbApiHook):
         used in get_uri() and get_connection()
         """
         conn = self.get_connection(self.sqream_blue_conn_id)  # type: ignore[attr-defined]
-        extra_dict = conn.extra_dejson
-        database = self._get_field(extra_dict, "database") or ""
-        host = self._get_field(extra_dict, "host") or ""
+        # extra_dict = conn.extra_dejson
+        # database = self._get_field(extra_dict, "database") or ""
+        # host = self._get_field(extra_dict, "host") or ""
 
         conn_config = {
-            "host": self.host or host,
+            "host": conn.host,
             "username": conn.login,
-            "password": conn.password or "",
-            "database": self.database or database,
+            "password": conn.password,
+            "database": conn.database
         }
         return conn_config
 
