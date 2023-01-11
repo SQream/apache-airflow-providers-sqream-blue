@@ -60,8 +60,7 @@ class SQreamBlueHook(DbApiHook):
         from wtforms import BooleanField, StringField
 
         return {
-            "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget()),
-            "host": StringField(lazy_gettext("Host"), widget=BS3TextFieldWidget()),
+            "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget())
         }
 
     @staticmethod
@@ -79,10 +78,10 @@ class SQreamBlueHook(DbApiHook):
                     },
                     indent=1,
                 ),
-                # "host": "sqream_blue host domain",
-                "login": "sqream_blue username",
-                "password": "sqream_blue password",
-                "database": "sqream_blue db name",
+                "host": "enter host domain to connect to SQream",
+                "login": "enter username to connect to SQream",
+                "password": "enter password to connect to SQream",
+                "database": "enter db name to connect to SQream",
             },
         }
 
