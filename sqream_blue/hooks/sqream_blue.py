@@ -321,7 +321,6 @@ class SQreamBlueHook(DbApiHook):
         else:
             raise ValueError("List of SQL statements is empty")
 
-        self.log.info("handler=%s", handler)
         with closing(self.get_conn()) as conn:
             # self.set_autocommit(conn, autocommit)
 
@@ -331,7 +330,7 @@ class SQreamBlueHook(DbApiHook):
                     self.log.info("Run sql %s", sql_statement)
                     self._run_command(cur, sql_statement, parameters)
 
-                    if handler is not None:
+                    if handler is not None and cur.query_type == 1:
                         result = handler(cur)
                         if return_single_query_results(sql, return_last, split_statements):
                             self.log.info("result=%s", result)
@@ -344,7 +343,7 @@ class SQreamBlueHook(DbApiHook):
                             results.append(result)
                             self.descriptions.append(cur.description)
 
-                    query_id = cur.context_id
+                    query_id = cur.get_statement_id()
                     self.log.info("Rows affected: %s", cur.rowcount)
                     self.log.info("Sqream blue query id: %s", query_id)
                     self.query_ids.append(query_id)

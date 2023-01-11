@@ -54,4 +54,5 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
                     dict_result[description[0]] = row[idx]
                 current_processed_result.append(dict_result)
             returned_results.append(current_processed_result)
+        self.log.info("All results %s", returned_results)
         return returned_results
