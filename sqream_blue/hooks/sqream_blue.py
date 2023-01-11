@@ -69,7 +69,7 @@ class SQreamBlueHook(DbApiHook):
         """Returns custom field behaviour"""
 
         return {
-            "hidden_fields": ["port", "schema"],
+            "hidden_fields": ["port", "schema", "extra"],
             "relabeling": {},
             "placeholders": {
                 "host": "enter host domain to connect to SQream",
@@ -111,15 +111,15 @@ class SQreamBlueHook(DbApiHook):
         used in get_uri() and get_connection()
         """
         conn = self.get_connection(self.sqream_blue_conn_id)  # type: ignore[attr-defined]
-        # extra_dict = conn.extra_dejson
-        # database = self._get_field(extra_dict, "database") or ""
+        extra_dict = conn.extra_dejson
+        database = self._get_field(extra_dict, "database") or ""
         # host = self._get_field(extra_dict, "host") or ""
         self.log.info("conn=%s", conn)
         conn_config = {
             "host": conn.host,
             "username": conn.login,
             "password": conn.password,
-            "database": self.database
+            "database": self.database or database
         }
         return conn_config
 
