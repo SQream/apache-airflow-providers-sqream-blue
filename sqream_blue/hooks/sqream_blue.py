@@ -279,12 +279,9 @@ class SQreamBlueHook(DbApiHook):
         """
         self.query_ids = []
 
-        self.log.info("split_statements=%s", split_statements)
         if isinstance(sql, str):
-            split_statements = False
             if split_statements:
-                # split_statements_tuple = util_text.split_statements(StringIO(sql))
-                split_statements_tuple = ""
+                split_statements_tuple = self.split_sql_string(sql)
                 sql_list: Iterable[str] = [
                     sql_string for sql_string, _ in split_statements_tuple if sql_string
                 ]
