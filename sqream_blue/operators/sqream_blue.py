@@ -1,7 +1,7 @@
 from __future__ import annotations
-import warnings
-from typing import Any, Iterable, Mapping, Sequence, SupportsAbs
+from typing import Any, Sequence
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
+
 
 class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
     template_fields: Sequence[str] = ("sql",)
@@ -13,23 +13,13 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
             self,
             *,
             sqream_blue_conn_id: str = "sqream_blue_default",
-            warehouse: str | None = None,
             database: str | None = None,
-            role: str | None = None,
-            schema: str | None = None,
-            authenticator: str | None = None,
-            session_parameters: dict | None = None,
             **kwargs,
     ) -> None:
-        if any([warehouse, database, role, schema, authenticator, session_parameters]):
+        if any([database]):
             hook_params = kwargs.pop("hook_params", {})
             kwargs["hook_params"] = {
-                "warehouse": warehouse,
                 "database": database,
-                "role": role,
-                "schema": schema,
-                "authenticator": authenticator,
-                "session_parameters": session_parameters,
                 **hook_params,
             }
         super().__init__(conn_id=sqream_blue_conn_id, **kwargs)
@@ -52,4 +42,5 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
                     dict_result[description[0]] = row[idx]
                 current_processed_result.append(dict_result)
             returned_results.append(current_processed_result)
+        self.log.info("All results %s", returned_results)
         return returned_results

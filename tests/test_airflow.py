@@ -1,54 +1,45 @@
-from airflow import settings
-from airflow.models import Connection
-from sqream_blue.operators.sqream_blue import SQreamBlueSqlOperator
+import logging
+from datetime import timedelta
 from airflow import DAG
-import datetime
+from airflow.operators.python_operator import PythonOperator
+from sqream_blue.operators.sqream_blue import SQreamBlueSqlOperator
+from sqream_blue.hooks.sqream_blue import SQreamBlueHook
+from airflow.utils.dates import days_ago
 
-conn_id = "daniel_connection"
-conn_type = "sqream"
-host = "danielg.isqream.com"
-login = "sqream"
-password = "sqream"
-port = 443
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+with DAG(
+    dag_id='sqream_python_connector_dag3',
+    schedule_interval='0 0 * * *',
+    start_date=days_ago(2),
+    dagrun_timeout=timedelta(minutes=60),
+    tags=['daniel test 3']
+) as dag:
 
+    list_operator = SQreamBlueSqlOperator(
+        task_id='create_and_insert',
+        sql=['create or replace table t_a(x int not null)', 'insert into t_a values (1)', 'insert into t_a values (2)'],
+        sqream_blue_conn_id="daniel_connection",
+        dag=dag,
+    )
 
-
-#connect to airflow
-conn = Connection(
-        conn_id=conn_id,
-        conn_type=conn_type,
-        host=host,
-        login=login,
-        password=password,
-        port=port
-) #create a connection object
-session = settings.Session() # get the session
-session.add(conn)
-session.commit() # it will insert the connection object programmatically.
-
-
-
-# connect to sqream
-
-
-
-
-args = {"owner": "Airflow", "start_date": datetime(2022,1,1,1,1)}
-
-dag = DAG(
-    dag_id="sqreamm_dag", default_args=args, schedule_interval=None
-)
-
-simple_operator = SQreamBlueSqlOperator(
-    task_id="just_select",
-    sql='select * from t',
-    sqream_conn_id="daniel_connection")
-
-list_operator = SQreamBlueSqlOperator(
-    task_id="create_and_insert",
-    sql=['create table t(x int not null)', 'insert into t values (1)'],
-    sqream_conn_id="daniel_connection")
+    simple_operator = SQreamBlueSqlOperator(
+        task_id='just_select',
+        sql='select * from t_a',
+        sqream_blue_conn_id="daniel_connection",
+        dag=dag,
+    )
 
 
-list_operator >> simple_operator
+    def count_python(**context):
+        dwh_hook = SQreamBlueHook(sqream_blue_conn_id="daniel_connection")
+        result = dwh_hook.get_first("select count(*) from public.t_a")
+        logging.info("Number of rows in `public.t_a`  - %s", result[0])
+
+    count_through_python_operator_query = PythonOperator(
+        task_id="log_row_count",
+        python_callable=count_python)
+
+
+    list_operator >> simple_operator >> count_through_python_operator_query
