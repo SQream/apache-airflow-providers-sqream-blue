@@ -49,7 +49,6 @@ class SQreamBlueHook(DbApiHook):
     default_conn_name = "sqream_blue_default"
     conn_type = "sqream_blue"
     hook_name = "sqream_blue"
-    supports_autocommit = False
     _test_connection_sql = "select 1"
 
     @staticmethod
@@ -82,7 +81,6 @@ class SQreamBlueHook(DbApiHook):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.database = kwargs.pop("database", None)
-        # self.host = kwargs.pop("host", None)
         self.query_ids: list[str] = []
 
     def _get_field(self, extra_dict, field_name):
@@ -112,9 +110,7 @@ class SQreamBlueHook(DbApiHook):
         """
         conn = self.get_connection(self.sqream_blue_conn_id)  # type: ignore[attr-defined]
         extra_dict = conn.extra_dejson
-        database = self._get_field(extra_dict, "database") or ""
-        # host = self._get_field(extra_dict, "host") or ""
-        self.log.info("conn=%s", conn)
+        database = self._get_field(extra_dict, "database") or "master"
         conn_config = {
             "host": conn.host,
             "username": conn.login,
