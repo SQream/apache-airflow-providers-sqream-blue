@@ -293,10 +293,9 @@ class SQreamBlueHook(DbApiHook):
             raise ValueError("List of SQL statements is empty")
 
         with closing(self.get_conn()) as conn:
-
-            with self._get_cursor(conn, return_dictionaries) as cur:
-                results = []
-                for sql_statement in sql_list:
+            results = []
+            for sql_statement in sql_list:
+                with self._get_cursor(conn, return_dictionaries) as cur:
                     self.log.info("Run sql %s", sql_statement)
                     self._run_command(cur, sql_statement, parameters)
 
