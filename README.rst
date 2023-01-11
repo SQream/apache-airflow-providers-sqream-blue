@@ -15,7 +15,7 @@ Requirements
 
 Installing the Airflow-provider-sqream-blue
 -------------------------------------------
-The Airflow provider sqream-blue is available via `PyPi <https://pypi.org/project/apache-airflow-providers-sqream-blue/>`_.
+The Airflow provider sqream-blue is available via `PyPi <https://pypi.org/project/airflow-provider-sqream-blue/>`_.
 
 Install the connector with ``pip3``:
 
