@@ -21,7 +21,7 @@ Install the connector with ``pip3``:
 
 .. code-block:: console
 
-    $ pip3 install apache-airflow-providers-sqream-blue
+    pip3 install airflow-provider-sqream-blue
 
 ``pip3`` will automatically installs all necessary libraries and modules.
 
@@ -47,7 +47,7 @@ To find dag folder run this command
 
 .. code-block:: console
     
-    $ airflow config list | grep dags_folder
+    airflow config list | grep dags_folder
 
 Example of python dag file
 
