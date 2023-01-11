@@ -5,6 +5,5 @@ def get_provider_info():
         "name": "Sqream blue Airflow Provider",
         "description": "About Apache Airflow - A platform to programmatically author, schedule, and monitor workflows",
         "hook-class-names": ["sqream_blue.hooks.sqream_blue.SQreamBlueHook"],
-        # "extra-links": ["sample_provider.operators.sample_operator.ExtraLink"],
         "versions": ["0.0.1"]
     }
