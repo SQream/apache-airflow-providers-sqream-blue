@@ -281,10 +281,7 @@ class SQreamBlueHook(DbApiHook):
 
         if isinstance(sql, str):
             if split_statements:
-                split_statements_tuple = self.split_sql_string(sql)
-                sql_list: Iterable[str] = [
-                    sql_string for sql_string, _ in split_statements_tuple if sql_string
-                ]
+                sql_list = self.split_sql_string(sql)
             else:
                 sql_list = [self.strip_sql_string(sql)]
         else:
