@@ -19,7 +19,7 @@ setup(
     },
     license='Apache License 2.0',
     packages=['sqream_blue', 'sqream_blue.hooks','sqream_blue.operators'],
-    install_requires=['apache-airflow>=2.0', 'apache-airflow-providers-common-sql==1.3.2', 'pysqream-blue==1.0.18'],
+    install_requires=['apache-airflow>=2.0', 'apache-airflow-providers-common-sql==1.3.2', 'pysqream-blue==1.0.19'],
     setup_requires=['setuptools', 'wheel'],
     author='SQream',
     author_email='info@sqream.com',
