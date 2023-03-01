@@ -18,7 +18,7 @@ def _ensure_prefixes(conn_type):
         @wraps(func)
         def inner():
             field_behaviors = func()
-            conn_attrs = {"host", "login", "password", "port", "database"}
+            conn_attrs = {"host", "access_token", "port", "extra"}
 
             def _ensure_prefix(field):
                 if field not in conn_attrs and not field.startswith("extra__"):
@@ -64,8 +64,7 @@ class SQreamBlueHook(DbApiHook):
             "relabeling": {},
             "placeholders": {
                 "host": "enter host domain to connect to SQream",
-                "login": "enter username to connect to SQream",
-                "password": "enter password to connect to SQream",
+                "access_token": "enter access_token to connect to SQream",
                 "database": "enter db name to connect to SQream",
             },
         }
@@ -105,8 +104,7 @@ class SQreamBlueHook(DbApiHook):
         database = self._get_field(extra_dict, "database") or "master"
         conn_config = {
             "host": conn.host,
-            "username": conn.login,
-            "password": conn.password,
+            "access_token": conn.access_token,
             "database": self.database or database
         }
         return conn_config
