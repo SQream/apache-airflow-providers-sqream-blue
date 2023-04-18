@@ -28,5 +28,5 @@ setup(
         "Framework :: Apache Airflow",
         "Framework :: Apache Airflow :: Provider",
     ],
-    python_requires='~=3.7',
+    python_requires='>=3.9',
 )
