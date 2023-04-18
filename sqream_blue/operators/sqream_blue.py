@@ -36,7 +36,7 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
         returned_results = []
         for result_id, result_list in enumerate(results):
             current_processed_result = []
-            if results is not None:
+            if result_list is not None:
                 for row in result_list:
                     dict_result: dict[Any, Any] = {}
                     for idx, description in enumerate(validated_descriptions[result_id]):
