@@ -10,7 +10,7 @@ This package is an Operator for executing SQL statments on SQream Blue using Pyt
 Requirements
 -------------
 
-* Python 3.7+
+* Python 3.9+
 
 
 Installing the Airflow-provider-sqream-blue
