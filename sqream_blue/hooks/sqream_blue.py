@@ -72,6 +72,7 @@ class SQreamBlueHook(DbApiHook):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.database = kwargs.pop("database", None)
+        self.access_token = kwargs.pop("access_token", None)
         self.query_ids: list[str] = []
 
     def _get_field(self, extra_dict, field_name):
@@ -102,9 +103,10 @@ class SQreamBlueHook(DbApiHook):
         conn = self.get_connection(self.sqream_blue_conn_id)  # type: ignore[attr-defined]
         extra_dict = conn.extra_dejson
         database = self._get_field(extra_dict, "database") or "master"
+        access_token = self._get_field(extra_dict, "access_token")
         conn_config = {
             "host": conn.host,
-            "access_token": conn.access_token,
+            "access_token": self.access_token or access_token,
             "database": self.database or database
         }
         return conn_config
