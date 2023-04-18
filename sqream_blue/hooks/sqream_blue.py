@@ -18,7 +18,7 @@ def _ensure_prefixes(conn_type):
         @wraps(func)
         def inner():
             field_behaviors = func()
-            conn_attrs = {"host", "login", "password", "port", "extra"}
+            conn_attrs = {"host", "login", "password", "port", "database"}
 
             def _ensure_prefix(field):
                 if field not in conn_attrs and not field.startswith("extra__"):
@@ -148,7 +148,8 @@ class SQreamBlueHook(DbApiHook):
         :return: return only result of the LAST SQL expression if handler was provided.
         """
         self.query_ids = []
-
+        _last_description = None
+        _last_result = None
         if isinstance(sql, str):
             if split_statements:
                 sql_list = self.split_sql_string(sql)
@@ -167,12 +168,11 @@ class SQreamBlueHook(DbApiHook):
             for sql_statement in sql_list:
                 with self._get_cursor(conn) as cur:
                     self._run_command(cur, sql_statement, parameters)
-
+                    _last_description = cur.description
                     if handler is not None and cur.query_type == 1:
                         result = handler(cur)
                         if return_single_query_results(sql, return_last, split_statements):
                             _last_result = result
-                            _last_description = cur.description
                         else:
                             results.append(result)
                             self.descriptions.append(cur.description)
@@ -182,7 +182,7 @@ class SQreamBlueHook(DbApiHook):
                     self.log.info("Sqream blue query id: %s", query_id)
                     self.query_ids.append(query_id)
 
-        if handler is None:
+        if handler is None or cur.query_type != 1:
             return None
         if return_single_query_results(sql, return_last, split_statements):
             self.descriptions = [_last_description]
