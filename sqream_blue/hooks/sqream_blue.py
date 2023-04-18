@@ -18,7 +18,7 @@ def _ensure_prefixes(conn_type):
         @wraps(func)
         def inner():
             field_behaviors = func()
-            conn_attrs = {"host", "login", "password", "port", "database"}
+            conn_attrs = {"host", "access_token", "port", "extra"}
 
             def _ensure_prefix(field):
                 if field not in conn_attrs and not field.startswith("extra__"):
@@ -51,28 +51,29 @@ class SQreamBlueHook(DbApiHook):
         from wtforms import StringField
 
         return {
-            "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget())
+            "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget()),
+            "access_token": StringField(lazy_gettext("Access token"), widget=BS3TextFieldWidget())
         }
 
     @staticmethod
     @_ensure_prefixes(conn_type="sqream_blue")
     def get_ui_field_behaviour() -> dict[str, Any]:
         """Returns custom field behaviour"""
-
-        return {
-            "hidden_fields": ["port", "schema", "extra"],
-            "relabeling": {},
-            "placeholders": {
+        fileds = {
                 "host": "enter host domain to connect to SQream",
-                "login": "enter username to connect to SQream",
-                "password": "enter password to connect to SQream",
+                "Access token": "enter access token to connect to SQream",
                 "database": "enter db name to connect to SQream",
-            },
+            }
+        return {
+            "hidden_fields": ["port", "schema", "extra", "login", "password"],
+            "relabeling": {},
+            "placeholders": fileds,
         }
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.database = kwargs.pop("database", None)
+        self.access_token = kwargs.pop("access_token", None)
         self.query_ids: list[str] = []
 
     def _get_field(self, extra_dict, field_name):
@@ -103,10 +104,10 @@ class SQreamBlueHook(DbApiHook):
         conn = self.get_connection(self.sqream_blue_conn_id)  # type: ignore[attr-defined]
         extra_dict = conn.extra_dejson
         database = self._get_field(extra_dict, "database") or "master"
+        access_token = self._get_field(extra_dict, "access_token")
         conn_config = {
             "host": conn.host,
-            "username": conn.login,
-            "password": conn.password,
+            "access_token": self.access_token or access_token,
             "database": self.database or database
         }
         return conn_config

@@ -14,12 +14,14 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
             *,
             sqream_blue_conn_id: str = "sqream_blue_default",
             database: str | None = None,
+            access_token: str | None = None,
             **kwargs,
     ) -> None:
-        if any([database]):
+        if any([database]) and any([access_token]):
             hook_params = kwargs.pop("hook_params", {})
             kwargs["hook_params"] = {
                 "database": database,
+                "access_token": access_token,
                 **hook_params,
             }
         super().__init__(conn_id=sqream_blue_conn_id, **kwargs)
