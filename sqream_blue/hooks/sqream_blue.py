@@ -169,8 +169,6 @@ class SQreamBlueHook(DbApiHook):
                 with self._get_cursor(conn) as cur:
                     self._run_command(cur, sql_statement, parameters)
                     _last_description = cur.description
-                    print(f"query type={cur.query_type}")
-                    print(f"handler = {handler}")
                     if handler is not None and cur.query_type == 1:
                         result = handler(cur)
                         if return_single_query_results(sql, return_last, split_statements):
