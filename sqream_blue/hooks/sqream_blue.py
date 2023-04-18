@@ -58,15 +58,15 @@ class SQreamBlueHook(DbApiHook):
     @_ensure_prefixes(conn_type="sqream_blue")
     def get_ui_field_behaviour() -> dict[str, Any]:
         """Returns custom field behaviour"""
-
-        return {
-            "hidden_fields": ["port", "schema", "extra"],
-            "relabeling": {},
-            "placeholders": {
+        fileds = {
                 "host": "enter host domain to connect to SQream",
                 "access_token": "enter access_token to connect to SQream",
                 "database": "enter db name to connect to SQream",
-            },
+            }
+        return {
+            "hidden_fields": ["port", "schema", "extra"],
+            "relabeling": fileds,
+            "placeholders": fileds,
         }
 
     def __init__(self, *args, **kwargs) -> None:
