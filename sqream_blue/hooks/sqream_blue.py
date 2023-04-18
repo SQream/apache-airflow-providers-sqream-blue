@@ -149,6 +149,7 @@ class SQreamBlueHook(DbApiHook):
         """
         self.query_ids = []
         _last_description = None
+        _last_result = None
         if isinstance(sql, str):
             if split_statements:
                 sql_list = self.split_sql_string(sql)
@@ -181,7 +182,7 @@ class SQreamBlueHook(DbApiHook):
                     self.log.info("Sqream blue query id: %s", query_id)
                     self.query_ids.append(query_id)
 
-        if handler is None:
+        if handler is None or cur.query_type != 1:
             return None
         if return_single_query_results(sql, return_last, split_statements):
             self.descriptions = [_last_description]
