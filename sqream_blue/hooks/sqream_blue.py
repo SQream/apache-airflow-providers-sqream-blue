@@ -148,7 +148,7 @@ class SQreamBlueHook(DbApiHook):
         :return: return only result of the LAST SQL expression if handler was provided.
         """
         self.query_ids = []
-
+        _last_description = None
         if isinstance(sql, str):
             if split_statements:
                 sql_list = self.split_sql_string(sql)
@@ -167,12 +167,11 @@ class SQreamBlueHook(DbApiHook):
             for sql_statement in sql_list:
                 with self._get_cursor(conn) as cur:
                     self._run_command(cur, sql_statement, parameters)
-
+                    _last_description = cur.description
                     if handler is not None and cur.query_type == 1:
                         result = handler(cur)
                         if return_single_query_results(sql, return_last, split_statements):
                             _last_result = result
-                            _last_description = cur.description
                         else:
                             results.append(result)
                             self.descriptions.append(cur.description)
