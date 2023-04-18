@@ -52,6 +52,7 @@ class SQreamBlueHook(DbApiHook):
 
         return {
             "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget())
+            "access_token": StringField(lazy_gettext("Access token"), widget=BS3TextFieldWidget())
         }
 
     @staticmethod
@@ -60,7 +61,7 @@ class SQreamBlueHook(DbApiHook):
         """Returns custom field behaviour"""
         fileds = {
                 "host": "enter host domain to connect to SQream",
-                "access token": "enter access token to connect to SQream",
+                "Access token": "enter access token to connect to SQream",
                 "database": "enter db name to connect to SQream",
             }
         return {
