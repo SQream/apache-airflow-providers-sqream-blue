@@ -34,13 +34,14 @@ class SQreamBlueSqlOperator(SQLExecuteQueryOperator):
                 )
             validated_descriptions.append(description)
         returned_results = []
-        for result_id, result_list in enumerate(results):
-            current_processed_result = []
-            for row in result_list:
-                dict_result: dict[Any, Any] = {}
-                for idx, description in enumerate(validated_descriptions[result_id]):
-                    dict_result[description[0]] = row[idx]
-                current_processed_result.append(dict_result)
-            returned_results.append(current_processed_result)
-        self.log.info("All results %s", returned_results)
-        return returned_results
+        if results is not None:
+            for result_id, result_list in enumerate(results):
+                current_processed_result = []
+                for row in result_list:
+                    dict_result: dict[Any, Any] = {}
+                    for idx, description in enumerate(validated_descriptions[result_id]):
+                        dict_result[description[0]] = row[idx]
+                    current_processed_result.append(dict_result)
+                returned_results.append(current_processed_result)
+            self.log.info("All results %s", returned_results)
+            return returned_results
