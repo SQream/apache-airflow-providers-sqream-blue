@@ -64,8 +64,8 @@ class SQreamBlueHook(DbApiHook):
                 "database": "enter db name to connect to SQream",
             }
         return {
-            "hidden_fields": ["port", "schema", "extra"],
-            "relabeling": fileds,
+            "hidden_fields": ["port", "schema", "extra", "login", "password"],
+            "relabeling": {},
             "placeholders": fileds,
         }
 
