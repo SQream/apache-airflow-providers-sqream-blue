@@ -18,7 +18,7 @@ def _ensure_prefixes(conn_type):
         @wraps(func)
         def inner():
             field_behaviors = func()
-            conn_attrs = {"host", "access_token", "port", "extra"}
+            conn_attrs = {"host", "access_token", "pool_name", "port", "extra"}
 
             def _ensure_prefix(field):
                 if field not in conn_attrs and not field.startswith("extra__"):
@@ -52,7 +52,8 @@ class SQreamBlueHook(DbApiHook):
 
         return {
             "database": StringField(lazy_gettext("Database"), widget=BS3TextFieldWidget()),
-            "access_token": StringField(lazy_gettext("Access token"), widget=BS3TextFieldWidget())
+            "access_token": StringField(lazy_gettext("Access token"), widget=BS3TextFieldWidget()),
+            "pool_name": StringField(lazy_gettext("Pool name"), widget=BS3TextFieldWidget())
         }
 
     @staticmethod
@@ -74,6 +75,7 @@ class SQreamBlueHook(DbApiHook):
         super().__init__(*args, **kwargs)
         self.database = kwargs.pop("database", None)
         self.access_token = kwargs.pop("access_token", None)
+        self.pool_name = kwargs.pop("pool_name", None)
         self.query_ids: list[str] = []
 
     def _get_field(self, extra_dict, field_name):
@@ -105,9 +107,11 @@ class SQreamBlueHook(DbApiHook):
         extra_dict = conn.extra_dejson
         database = self._get_field(extra_dict, "database") or "master"
         access_token = self._get_field(extra_dict, "access_token")
+        pool_name = self._get_field(extra_dict, "pool_name")
         conn_config = {
             "host": conn.host,
             "access_token": self.access_token or access_token,
+            "pool_name": self.pool_name or pool_name,
             "database": self.database or database
         }
         return conn_config
