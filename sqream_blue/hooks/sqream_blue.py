@@ -173,6 +173,7 @@ class SQreamBlueHook(DbApiHook):
             for sql_statement in sql_list:
                 with self._get_cursor(conn) as cur:
                     try:
+                        query_id = None
                         self._run_command(cur, sql_statement, parameters)
                         _last_description = cur.description
                         if handler is not None and cur.query_type == 1:
@@ -188,6 +189,8 @@ class SQreamBlueHook(DbApiHook):
                         self.log.info("Sqream blue query id: %s", query_id)
                         self.query_ids.append(query_id)
                     except Exception as e:
+                        if cur:
+                            query_id = cur.get_statement_id()
                         self.log.error(f"Error accrued while try to execute {sql_statement}, query-id={query_id}\n{str(e)}")
 
         if handler is None or cur.query_type != 1:
