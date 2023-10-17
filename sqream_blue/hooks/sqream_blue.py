@@ -191,7 +191,9 @@ class SQreamBlueHook(DbApiHook):
                     except Exception as e:
                         if cur:
                             query_id = cur.get_statement_id()
-                        self.log.error(f"Error accrued while try to execute {sql_statement}, query-id={query_id}\n{str(e)}")
+                        error = f"Error accrued while try to execute {sql_statement}, query-id={query_id}\n{str(e)}"
+                        self.log.error(error)
+                        raise RuntimeError(error)
 
         if handler is None or cur.query_type != 1:
             return None
