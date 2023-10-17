@@ -172,20 +172,23 @@ class SQreamBlueHook(DbApiHook):
             results = []
             for sql_statement in sql_list:
                 with self._get_cursor(conn) as cur:
-                    self._run_command(cur, sql_statement, parameters)
-                    _last_description = cur.description
-                    if handler is not None and cur.query_type == 1:
-                        result = handler(cur)
-                        if return_single_query_results(sql, return_last, split_statements):
-                            _last_result = result
-                        else:
-                            results.append(result)
-                            self.descriptions.append(cur.description)
+                    try:
+                        self._run_command(cur, sql_statement, parameters)
+                        _last_description = cur.description
+                        if handler is not None and cur.query_type == 1:
+                            result = handler(cur)
+                            if return_single_query_results(sql, return_last, split_statements):
+                                _last_result = result
+                            else:
+                                results.append(result)
+                                self.descriptions.append(cur.description)
 
-                    query_id = cur.get_statement_id()
-                    self.log.info("Rows affected: %s", cur.rowcount)
-                    self.log.info("Sqream blue query id: %s", query_id)
-                    self.query_ids.append(query_id)
+                        query_id = cur.get_statement_id()
+                        self.log.info("Rows affected: %s", cur.rowcount)
+                        self.log.info("Sqream blue query id: %s", query_id)
+                        self.query_ids.append(query_id)
+                    except Exception as e:
+                        self.log.error(f"Error accrued while try to execute {sql_statement}, query-id={query_id}\n{str(e)}")
 
         if handler is None or cur.query_type != 1:
             return None
