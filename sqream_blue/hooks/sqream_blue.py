@@ -112,7 +112,8 @@ class SQreamBlueHook(DbApiHook):
             "host": conn.host,
             "access_token": self.access_token or access_token,
             "pool_name": self.pool_name or pool_name,
-            "database": self.database or database
+            "database": self.database or database,
+            "source_type": "JOBS"
         }
         return conn_config
 
